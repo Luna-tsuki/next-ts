@@ -1,0 +1,22 @@
+.cart {
+  display: grid;
+  grid-template-rows: 80px 1fr;
+  grid-template-columns: 1fr 400px;
+  margin: 0 auto;
+  max-width: 1200px;
+  min-height: 300vh;
+  color: #333;
+}
+.header {
+  grid-row: 1;
+  grid-column: 1 / span 2;
+}
+.main {
+  grid-row: 2;
+  grid-column: 1;
+}
+.sidebar {
+  grid-row: 2;
+  grid-column: 2;
+  margin-left: 40px;
+}

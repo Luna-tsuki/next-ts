@@ -1,0 +1,144 @@
+.nav_div {
+  position: sticky;
+  top: 40px;
+  padding: 30px;
+  background-color: #f7f7f7;
+  font-size: 1rem;
+  .nav_payment {
+    font-size: 0.9rem;
+    .nav_payment_total {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .nav_paymentAmountLabel {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #eb6157;
+      }
+      .nav_payment_price {
+        margin-right: 5px;
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #eb6157;
+      }
+    }
+    .nav_payment_point {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0px;
+      .nav_payment_point_a {
+        cursor: pointer;
+      }
+    }
+    .nav_payment_SumShorten {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 3px 0;
+      padding: 4px 0px;
+      border-top: 2px solid #b3b3b3;
+    }
+    .nav_payment_delivery {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 3px 0;
+      padding: 4px 0px;
+      border-top: 1px solid #dbdbdb;
+    }
+    .nav_payment_info {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #808080;
+    }
+    .nav_checkoutFlowModeForm {
+      margin-top: 20px;
+      .nav_label {
+        .nav_label_input {
+          margin-bottom: 15px;
+        }
+        .nav_checkmark {
+          .nav_checkmark_noprice {
+            margin-left: 10px;
+            padding: 2px 5px;
+            font-size: 0.8rem;
+            line-height: 1;
+            color: #eb6157;
+            border: 1px solid #eb6157;
+            background-color: #fff;
+          }
+        }
+      }
+    }
+    .nav_payment_calcShipping {
+      margin-top: 10px;
+      .nav_payment_calcShipping_span {
+        .nav_payment_calcShipping_price {
+          font-size: 1.2rem;
+          font-weight: bold;
+          color: #eb6157;
+        }
+        .nav_payment_calcShipping_free {
+          color: #eb6157;
+          margin-left: 3px;
+        }
+      }
+    }
+    .nav_payment_note {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #808080;
+    }
+    .nav_submit {
+      margin: 20px auto;
+      text-align: center;
+      .nav_submit_button {
+        appearance: none;
+        padding: 5px 0;
+        min-width: 320px;
+        min-height: 48px;
+        border-radius: 4px;
+        border: 0px;
+        background-color: #eb6157;
+        transition: background-color 0.2s;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        &:hover {
+          border-color: #f08981;
+          background-color: #f08981;
+        }
+      }
+      .nav_submit_button_shop {
+        margin-top: 15px;
+        padding: 5px 0;
+        appearance: none;
+        min-width: 320px;
+        min-height: 48px;
+        border-radius: 4px;
+        border: 1px solid #dbdbdb;
+        background-color: #fff;
+        color: #333;
+        font-size: 16px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        &:hover {
+          border-color: #009e96;
+        }
+      }
+    }
+  }
+}

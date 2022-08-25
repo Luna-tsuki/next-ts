@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
+import styles from "../styles/Home.module.css";
 import Head from "next/head";
 import Image from "next/image";
-import styles from "../styles/Home.module.css";
 import Link from "next/link";
 
 const Home: NextPage = () => {
@@ -51,9 +51,20 @@ const Home: NextPage = () => {
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
           </a>
+        </div>
+      </main>
+
+      <main className={styles.main}>
+        <p className={styles.description}>Nitori</p>
+        <div className={styles.grid}>
           <div className={styles.card}>
             <Link href={`/nitori/category`}>
-              <a>nitori/category</a>
+              <a>category</a>
+            </Link>
+          </div>
+          <div className={styles.card}>
+            <Link href={`/nitori/cart`}>
+              <a>cart</a>
             </Link>
           </div>
         </div>
