@@ -1,12 +1,27 @@
 import { useState, useEffect } from "react";
 import styles from "./cart.module.scss";
 import Head from "next/head";
-import Image from "next/image";
+
 import CartItem from "../../component/cart_item";
 import CartAfterItem from "../../component/cart_after_item";
 import CartSidebar from "../../component/cart_sidebar";
+import { Book, Review, Post } from "../../types/cart_type";
 
-const Category = () => {
+type Props = {
+  book: Book;
+  post: Post;
+};
+
+export default function Cart({ book, post }: Props) {
+  const [reviews, setReviews] = useState<Review[] | []>([]);
+
+  useEffect(() => {
+    // Client-side request are mocked by `mocks/browser.ts`.
+    fetch("/reviews")
+      .then((res) => res.json())
+      .then(setReviews);
+  }, []);
+
   return (
     <div className={styles.cart}>
       <Head>
@@ -16,16 +31,54 @@ const Category = () => {
       </Head>
       <header className={styles.header}>
         <h1 className={styles.h1}>カート</h1>
+        {/* <span>{book.title}</span> */}
       </header>
       <main className={styles.main}>
         <CartItem />
         <CartAfterItem />
+        {reviews && (
+          <ul>
+            {reviews.map((review) => (
+              <li key={review.id}>
+                <p>{review.text}</p>
+                <p>{review.author}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+        <span>{post.text}</span>
       </main>
       <nav className={styles.sidebar}>
         <CartSidebar />
       </nav>
     </div>
   );
-};
+}
 
-export default Category;
+// export async function getServerSideProps() {
+//   // Server-side requests are mocked by `mocks/server.ts`.
+//   const res = await fetch("https://my.backend/book");
+//   const book = await res.json();
+
+//   return {
+//     props: {
+//       book,
+//     },
+//   };
+// }
+
+export async function getStaticProps() {
+  // Call an external API endpoint to get posts.
+  // You can use any data fetching library
+  const res = await fetch("https://my.backend/posts");
+  console.log(res);
+  const post = await res.json();
+
+  // By returning { props: { posts } }, the Blog component
+  // will receive `posts` as a prop at build time
+  return {
+    props: {
+      post,
+    },
+  };
+}

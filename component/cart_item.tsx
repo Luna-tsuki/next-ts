@@ -45,6 +45,7 @@ const CartItem = () => {
                     type="text"
                     name="number"
                     value="1"
+                    readOnly
                     className={styles.media_right_number_input}
                   />
                 </div>
@@ -118,6 +119,7 @@ const CartItem = () => {
                     type="text"
                     name="number"
                     value="1"
+                    readOnly
                     className={styles.media_right_number_input}
                   />
                 </div>
@@ -193,6 +195,7 @@ const CartItem = () => {
                     type="text"
                     name="number"
                     value="1"
+                    readOnly
                     className={styles.media_right_number_input}
                   />
                 </div>
