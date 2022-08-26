@@ -14,3 +14,25 @@ export type Post = {
   id: string;
   text: string;
 };
+
+export type cartItemsObject = {
+  id: number;
+  images: string;
+  skuName: string;
+  skuId: number;
+  color: string;
+  size: string;
+  deliveryTime: string;
+  storePickUp: boolean;
+  quantity: number;
+  price: number;
+  itemsPrice: number;
+  deliveryPrice: number;
+  point: number;
+};
+export type cart = {
+  cartItems: cartItemsObject[];
+  cartAfterItems: cartItemsObject[];
+  totalPrice: number;
+  totalPoint: number;
+};

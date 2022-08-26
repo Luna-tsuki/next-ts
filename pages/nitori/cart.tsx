@@ -1,26 +1,184 @@
 import { useState, useEffect } from "react";
 import styles from "./cart.module.scss";
 import Head from "next/head";
+import axios from "axios";
 
 import CartItem from "../../component/cart_item";
 import CartAfterItem from "../../component/cart_after_item";
 import CartSidebar from "../../component/cart_sidebar";
-import { Book, Review, Post } from "../../types/cart_type";
+import { Book, Review, Post, cartItemsObject } from "../../types/cart_type";
 
 type Props = {
   book: Book;
   post: Post;
 };
 
-export default function Cart({ book, post }: Props) {
-  const [reviews, setReviews] = useState<Review[] | []>([]);
+const localhost = axios.create({
+  baseURL: "http://localhost:8080/todos",
+});
 
+export default function Cart({ book, post }: Props) {
+  // const initialState = {
+  //   cartItems: [
+  //     {
+  //       cartId: 1,
+  //       images:
+  //         "https://www.nitori-net.jp/ecstatic/image/product/8431007/843100701.jpg?imwidth=97&imdensity=1&ts=20200528175325664",
+  //       skuName: "キャスター付きベッド下収納",
+  //       skuId: 8431007,
+  //       color: "クリア",
+  //       size: "ダブル",
+  //       deliveryTime: "2～6日で出荷",
+  //       storePickUp: true,
+  //       quantity: 2,
+  //       price: 200,
+  //       itemsPrice: 400,
+  //       deliveryPrice: 0,
+  //       point: 15,
+  //     },
+  //     {
+  //       cartId: 2,
+  //       images:
+  //         "https://www.nitori-net.jp/ecstatic/image/product/7564741/756474101.jpg?imwidth=97&imdensity=1&ts=20200903170525431",
+  //       skuName:
+  //         "ベッドパッド マルチすっぽりシーツ 3点セット シングル(ヨウモウコンVT S)",
+  //       skuId: 7564741,
+  //       color: "アイボリー",
+  //       size: "シングル",
+  //       deliveryTime: "2～6日で出荷",
+  //       storePickUp: false,
+  //       quantity: 1,
+  //       price: 7990,
+  //       itemsPrice: 7990,
+  //       deliveryPrice: 0,
+  //       point: 72,
+  //     },
+  //   ],
+  //   cartAfterItems: [
+  //     {
+  //       cartAfterId: 1,
+  //       images:
+  //         "https://www.nitori-net.jp/ecstatic/image/product/7760904/776090401.jpg?imwidth=97&imdensity=1&ts=20201116102157609",
+  //       skuName: "フェイスタオル(シェリーST GY)",
+  //       skuId: 7760904,
+  //       color: "グレー",
+  //       size: "フェイスタオル",
+  //       deliveryTime: "2～6日で出荷",
+  //       storePickUp: true,
+  //       quantity: 3,
+  //       price: 100,
+  //       itemsPrice: 300,
+  //       deliveryPrice: 0,
+  //       point: 25,
+  //     },
+  //     {
+  //       cartAfterId: 2,
+  //       images:
+  //         "https://www.nitori-net.jp/ecstatic/image/product/7563921/756392101.jpg?imwidth=97&imdensity=1&ts=20220620112138465",
+  //       skuName: "洗える珪藻土入り除湿シート　シングル(NEW S)",
+  //       skuId: 7563921,
+  //       color: "グレー",
+  //       size: "シングル",
+  //       deliveryTime: "2～6日で出荷",
+  //       storePickUp: false,
+  //       quantity: 1,
+  //       price: 3990,
+  //       itemsPrice: 3990,
+  //       deliveryPrice: 0,
+  //       point: 22,
+  //     },
+  //   ],
+  //   totalPrice: 11111,
+  //   totalPoint: 2,
+  // };
+
+  const [data, setData] = useState(null);
+  const [cartItems, setCartItems] = useState<cartItemsObject[]>([]);
+  const [cartAfterItems, setCartAfterItems] = useState<cartItemsObject[]>([]);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPoint, setTotalPoint] = useState<number>(0);
+  const [isLoading, setLoading] = useState(false);
+
+  //msw Client-side request
   useEffect(() => {
-    // Client-side request are mocked by `mocks/browser.ts`.
-    fetch("/reviews")
+    setLoading(true);
+    fetch("/cart")
       .then((res) => res.json())
-      .then(setReviews);
+      .then((data) => {
+        setData(data);
+        setCartItems(data.cartItems);
+        setCartAfterItems(data.cartAfterItems);
+        setTotalPrice(data.totalPrice);
+        setTotalPoint(data.totalPoint);
+        setLoading(false);
+      });
   }, []);
+
+  //function カート「あとで買う」
+  const handleCartItemBuyAfter = (cartId: number) => {
+    //cart直接删除
+    const newCartItems = cartItems.filter((item) => item.id !== cartId);
+    setCartItems(newCartItems);
+    //加入あとで買う
+    const addAfterCartItems = cartItems.filter((item) => item.id == cartId);
+    const newCartAfterItems = cartAfterItems.concat(addAfterCartItems);
+    setCartAfterItems(newCartAfterItems);
+  };
+
+  //function カート「削除」
+  const handleCartItemDelete = async (cartId: number) => {
+    //delete通信
+    const res = await deleteCartItem(cartId);
+    console.log(res, "handleCartItemDelete");
+    const newCartItems = res.data.cartItems;
+
+    setCartItems(newCartItems);
+  };
+  async function deleteCartItem(cartId: number) {
+    return axios.delete(`/cart/${cartId}`);
+  }
+
+  //function 　あとで買う「カートに戻す」
+  const handleCartAfterItemReturnToCart = (cartAfterId: number) => {
+    //前端直接删除
+    const newAfterCartItems = cartItems.filter(
+      (item) => item.id !== cartAfterId
+    );
+    setCartAfterItems(newAfterCartItems);
+    //加入カート
+    const addCartItems = cartAfterItems.filter(
+      (item) => item.id == cartAfterId
+    );
+    const newCartItems = cartItems.concat(addCartItems);
+    setCartItems(newCartItems);
+  };
+
+  //function あとで買う「削除」
+  const handleCartAfterItemDelete = (cartAfterId: number) => {
+    //delete通信
+    deleteCartAfterItem(cartAfterId);
+
+    //前端直接删除
+    const newCartAfterItems = cartAfterItems.filter(
+      (item) => item.id !== cartAfterId
+    );
+    setCartAfterItems(newCartAfterItems);
+  };
+  async function deleteCartAfterItem(cartAfterId: number) {
+    // await localhost.delete(`/cart/${cartAfterId}`);
+  }
+
+  //msw Client-side request 例子
+  // const [reviews, setReviews] = useState<Review[] | []>([]);
+  // useEffect(() => {
+  //   // Client-side request are mocked by `mocks/browser.ts`.
+  //   fetch("/reviews")
+  //     .then((res) => res.json())
+  //     .then(setReviews);
+  // }, []);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (!data) return <p>No profile data</p>;
 
   return (
     <div className={styles.cart}>
@@ -34,22 +192,24 @@ export default function Cart({ book, post }: Props) {
         {/* <span>{book.title}</span> */}
       </header>
       <main className={styles.main}>
-        <CartItem />
-        <CartAfterItem />
-        {reviews && (
-          <ul>
-            {reviews.map((review) => (
-              <li key={review.id}>
-                <p>{review.text}</p>
-                <p>{review.author}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-        <span>{post.text}</span>
+        <CartItem
+          cartItems={cartItems}
+          handleCartItemBuyAfter={handleCartItemBuyAfter}
+          handleCartItemDelete={handleCartItemDelete}
+        />
+        <CartAfterItem
+          cartAfterItems={cartAfterItems}
+          handleCartAfterItemReturnToCart={handleCartAfterItemReturnToCart}
+          handleCartAfterItemDelete={handleCartAfterItemDelete}
+        />
+        {/* <span>{book.title}</span> */}
       </main>
       <nav className={styles.sidebar}>
-        <CartSidebar />
+        <CartSidebar
+          cartItems={cartItems}
+          totalPrice={totalPrice}
+          totalPoint={totalPoint}
+        />
       </nav>
     </div>
   );
@@ -67,18 +227,18 @@ export default function Cart({ book, post }: Props) {
 //   };
 // }
 
-export async function getStaticProps() {
-  // Call an external API endpoint to get posts.
-  // You can use any data fetching library
-  const res = await fetch("https://my.backend/posts");
-  console.log(res);
-  const post = await res.json();
+// export async function getStaticProps() {
+//   // Call an external API endpoint to get posts.
+//   // You can use any data fetching library
+//   const res = await fetch("https://my.backend/posts");
+//   console.log(res);
+//   const post = await res.json();
 
-  // By returning { props: { posts } }, the Blog component
-  // will receive `posts` as a prop at build time
-  return {
-    props: {
-      post,
-    },
-  };
-}
+//   // By returning { props: { posts } }, the Blog component
+//   // will receive `posts` as a prop at build time
+//   return {
+//     props: {
+//       post,
+//     },
+//   };
+// }
