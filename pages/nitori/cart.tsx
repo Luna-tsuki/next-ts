@@ -116,13 +116,13 @@ export default function Cart({ book, post }: Props) {
 
   //function カート「あとで買う」
   const handleCartItemBuyAfter = (cartId: number) => {
-    //cart直接删除
-    const newCartItems = cartItems.filter((item) => item.id !== cartId);
-    setCartItems(newCartItems);
     //加入あとで買う
     const addAfterCartItems = cartItems.filter((item) => item.id == cartId);
     const newCartAfterItems = cartAfterItems.concat(addAfterCartItems);
     setCartAfterItems(newCartAfterItems);
+    //前端直接删除
+    const newCartItems = cartItems.filter((item) => item.id !== cartId);
+    setCartItems(newCartItems);
   };
 
   //function カート「削除」
@@ -140,17 +140,19 @@ export default function Cart({ book, post }: Props) {
 
   //function 　あとで買う「カートに戻す」
   const handleCartAfterItemReturnToCart = (cartAfterId: number) => {
-    //前端直接删除
-    const newAfterCartItems = cartItems.filter(
-      (item) => item.id !== cartAfterId
-    );
-    setCartAfterItems(newAfterCartItems);
     //加入カート
     const addCartItems = cartAfterItems.filter(
       (item) => item.id == cartAfterId
     );
+    console.log(addCartItems);
+
     const newCartItems = cartItems.concat(addCartItems);
     setCartItems(newCartItems);
+    //前端直接删除
+    const newAfterCartItems = cartAfterItems.filter(
+      (item) => item.id !== cartAfterId
+    );
+    setCartAfterItems(newAfterCartItems);
   };
 
   //function あとで買う「削除」

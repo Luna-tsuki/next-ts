@@ -13,7 +13,7 @@ const CartAfterItem = ({
   handleCartAfterItemReturnToCart,
   handleCartAfterItemDelete,
 }: CartItemAfterType) => {
-  if (!cartAfterItems) {
+  if (cartAfterItems.length < 1) {
     return <div></div>;
   } else {
     return (
