@@ -14,7 +14,7 @@ type Props = {
 };
 
 const localhost = axios.create({
-  baseURL: "http://localhost:8080/todos",
+  baseURL: "http://localhost:4000/",
 });
 
 export default function Cart({ book, post }: Props) {
@@ -101,73 +101,87 @@ export default function Cart({ book, post }: Props) {
 
   //msw Client-side request
   useEffect(() => {
-    setLoading(true);
-    fetch("/cart")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setCartItems(data.cartItems);
-        setCartAfterItems(data.cartAfterItems);
-        setTotalPrice(data.totalPrice);
-        setTotalPoint(data.totalPoint);
-        setLoading(false);
-      });
+    fetchCartItems()
+    fetchCartPoint()
   }, []);
 
+  // 获取cart列表
+  async function fetchCartItems() {
+    setLoading(true);
+    localhost.get("/cart")
+    .then((res) => res.data)
+    .then((data) => {
+      setData(data);
+      setCartItems(data.filter((item:cartItemsObject) => item.isBuyAfter === false));
+      setCartAfterItems(data.filter((item:cartItemsObject) => item.isBuyAfter));
+      setLoading(false);
+    });
+  }
+
+  // 获取cart计算的分数
+  async function fetchCartPoint() {
+    setLoading(true);
+    localhost.get("/cartPoint")
+    .then((res) => res.data)
+    .then((data) => {
+      setTotalPrice(data.totalPrice);
+      setTotalPoint(data.totalPoint);
+      setLoading(false);
+    });
+  }
+
   //function カート「あとで買う」
-  const handleCartItemBuyAfter = (cartId: number) => {
-    //加入あとで買う
-    const addAfterCartItems = cartItems.filter((item) => item.id == cartId);
-    const newCartAfterItems = cartAfterItems.concat(addAfterCartItems);
-    setCartAfterItems(newCartAfterItems);
-    //前端直接删除
-    const newCartItems = cartItems.filter((item) => item.id !== cartId);
-    setCartItems(newCartItems);
+  const handleCartItemBuyAfter = async (cartId: number) => {
+    // //加入あとで買う
+    const item = cartItems.filter((item) => item.id == cartId)[0];
+
+    item.isBuyAfter = true
+    await updateCartItem(cartId, item)
+    await fetchCartItems()
   };
+
+  async function updateCartItem(cartId:number, data:cartItemsObject) {
+    return localhost.put(`/cart/${cartId}`, data);
+  }
 
   //function カート「削除」
   const handleCartItemDelete = async (cartId: number) => {
     //delete通信
-    const res = await deleteCartItem(cartId);
-    console.log(res, "handleCartItemDelete");
-    const newCartItems = res.data.cartItems;
-
-    setCartItems(newCartItems);
+    await deleteCartItem(cartId);
+    //前端直接删除
+    await fetchCartItems()
   };
   async function deleteCartItem(cartId: number) {
-    return axios.delete(`/cart/${cartId}`);
+    return localhost.delete(`/cart/${cartId}`);
   }
 
   //function 　あとで買う「カートに戻す」
-  const handleCartAfterItemReturnToCart = (cartAfterId: number) => {
+  const handleCartAfterItemReturnToCart = async (cartAfterId: number) => {
     //加入カート
     const addCartItems = cartAfterItems.filter(
       (item) => item.id == cartAfterId
-    );
-    console.log(addCartItems);
+    )[0];
 
-    const newCartItems = cartItems.concat(addCartItems);
-    setCartItems(newCartItems);
-    //前端直接删除
-    const newAfterCartItems = cartAfterItems.filter(
-      (item) => item.id !== cartAfterId
-    );
-    setCartAfterItems(newAfterCartItems);
+    addCartItems.isBuyAfter = false
+    await updateCartItem(cartAfterId, addCartItems)
+    await fetchCartItems()
   };
 
   //function あとで買う「削除」
-  const handleCartAfterItemDelete = (cartAfterId: number) => {
-    //delete通信
-    deleteCartAfterItem(cartAfterId);
-
+  const handleCartAfterItemDelete = async (cartAfterId: number) => {
+     //delete通信
+    await deleteCartItem(cartAfterId);
     //前端直接删除
-    const newCartAfterItems = cartAfterItems.filter(
-      (item) => item.id !== cartAfterId
-    );
-    setCartAfterItems(newCartAfterItems);
+    await fetchCartItems()
   };
-  async function deleteCartAfterItem(cartAfterId: number) {
-    // await localhost.delete(`/cart/${cartAfterId}`);
+
+  const updateQuality = async (event: ChangeEvent<HTMLInputElement>, itemId: number) => {
+  // //加入あとで買う
+  const item = cartItems.filter((item) => item.id == itemId)[0];
+
+  item.quantity = event.target.value
+  await updateCartItem(itemId, item)
+  await fetchCartItems()
   }
 
   //msw Client-side request 例子
@@ -198,6 +212,7 @@ export default function Cart({ book, post }: Props) {
           cartItems={cartItems}
           handleCartItemBuyAfter={handleCartItemBuyAfter}
           handleCartItemDelete={handleCartItemDelete}
+          handleUpdateQuality={updateQuality}
         />
         <CartAfterItem
           cartAfterItems={cartAfterItems}

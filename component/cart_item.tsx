@@ -8,17 +8,14 @@ type CartItemType = {
   cartItems: cartItemsObject[];
   handleCartItemBuyAfter: (cartId: number) => void;
   handleCartItemDelete: (cartId: number) => void;
-};
-
-const updateCount = (event: ChangeEvent<HTMLInputElement>, itemId: number) => {
-  const count = event.target.value;
-  console.log(count);
+  handleUpdateQuality: (event: ChangeEvent<HTMLInputElement>, itemId: number) => void;
 };
 
 const CartItem = ({
   cartItems,
   handleCartItemBuyAfter,
   handleCartItemDelete,
+  handleUpdateQuality
 }: CartItemType) => {
   if (cartItems.length < 1) {
     return (
@@ -85,7 +82,7 @@ const CartItem = ({
                           type="text"
                           name="number"
                           value={cartItem.quantity}
-                          onChange={(val) => updateCount(val, cartItem.id)}
+                          onChange={(val) => handleUpdateQuality(val, cartItem.id)}
                           className={styles.media_right_number_input}
                         />
                       </div>

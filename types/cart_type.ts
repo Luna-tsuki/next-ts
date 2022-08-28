@@ -29,6 +29,7 @@ export type cartItemsObject = {
   itemsPrice: number;
   deliveryPrice: number;
   point: number;
+  isBuyAfter: boolean
 };
 export type cart = {
   cartItems: cartItemsObject[];

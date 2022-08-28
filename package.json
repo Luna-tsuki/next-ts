@@ -6,11 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "json-server": "json-server --watch mocks/db.json --port 4000"
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "msw": "^0.44.2",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -23,8 +23,5 @@
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
     "typescript": "4.7.4"
-  },
-  "msw": {
-    "workerDirectory": "public"
   }
 }
