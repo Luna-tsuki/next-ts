@@ -6,19 +6,19 @@ import { cartItemsObject } from "../types/cart_type";
 
 type CartItemType = {
   cartItems: cartItemsObject[];
-  handleCartItemBuyAfter: (cartId: number) => void;
-  handleCartItemDelete: (cartId: number) => void;
-};
-
-const updateCount = (event: ChangeEvent<HTMLInputElement>, itemId: number) => {
-  const count = event.target.value;
-  console.log(count);
+  handleCartItemChange: (id: number, isBuyAfter: boolean) => void;
+  handleDelete: (id: number) => void;
+  handleUpdateQuality: (
+    id: number,
+    event: ChangeEvent<HTMLInputElement>
+  ) => void;
 };
 
 const CartItem = ({
   cartItems,
-  handleCartItemBuyAfter,
-  handleCartItemDelete,
+  handleCartItemChange,
+  handleDelete,
+  handleUpdateQuality,
 }: CartItemType) => {
   if (cartItems.length < 1) {
     return (
@@ -85,7 +85,9 @@ const CartItem = ({
                           type="text"
                           name="number"
                           value={cartItem.quantity}
-                          onChange={(val) => updateCount(val, cartItem.id)}
+                          onChange={(val) =>
+                            handleUpdateQuality(cartItem.id, val)
+                          }
                           className={styles.media_right_number_input}
                         />
                       </div>
@@ -101,7 +103,12 @@ const CartItem = ({
                       <div className={styles.media_right_after}>
                         <button
                           className={styles.media_right_after_button}
-                          onClick={() => handleCartItemBuyAfter(cartItem.id)}
+                          onClick={() =>
+                            handleCartItemChange(
+                              cartItem.id,
+                              cartItem.isBuyAfter
+                            )
+                          }
                         >
                           あとで買う
                         </button>
@@ -119,7 +126,7 @@ const CartItem = ({
                         </span>{" "}
                         <span
                           className={styles.media_right_delete_text}
-                          onClick={() => handleCartItemDelete(cartItem.id)}
+                          onClick={() => handleDelete(cartItem.id)}
                         >
                           <a className={styles.media_right_delete_text_a}>
                             削除

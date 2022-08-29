@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import styles from "./cart.module.scss";
 import Head from "next/head";
 import axios from "axios";
@@ -7,17 +7,24 @@ import CartItem from "../../component/cart_item";
 import CartAfterItem from "../../component/cart_after_item";
 import CartSidebar from "../../component/cart_sidebar";
 import { Book, Review, Post, cartItemsObject } from "../../types/cart_type";
+import { useRouter } from "next/router";
 
 type Props = {
   book: Book;
   post: Post;
 };
 
+type cartItemsServerSidePropsType = {
+  cartItemsServerSideProps: cartItemsObject[];
+};
+
 const localhost = axios.create({
-  baseURL: "http://localhost:8080/todos",
+  baseURL: "http://localhost:4000/",
 });
 
-export default function Cart({ book, post }: Props) {
+export default function Cart({
+  cartItemsServerSideProps,
+}: cartItemsServerSidePropsType) {
   // const initialState = {
   //   cartItems: [
   //     {
@@ -92,83 +99,33 @@ export default function Cart({ book, post }: Props) {
   //   totalPoint: 2,
   // };
 
-  const [data, setData] = useState(null);
-  const [cartItems, setCartItems] = useState<cartItemsObject[]>([]);
-  const [cartAfterItems, setCartAfterItems] = useState<cartItemsObject[]>([]);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [totalPoint, setTotalPoint] = useState<number>(0);
+  const [data, setData] = useState(cartItemsServerSideProps);
+  const [cartItems, setCartItems] = useState<cartItemsObject[]>(
+    cartItemsServerSideProps.filter(
+      (item: cartItemsObject) => item.isBuyAfter === false
+    )
+  );
+  const [cartAfterItems, setCartAfterItems] = useState<cartItemsObject[]>(
+    cartItemsServerSideProps.filter(
+      (item: cartItemsObject) => item.isBuyAfter === true
+    )
+  );
+
+  let tPrice: number = 0;
+  let tPoint: number = 0;
+  for (const item of cartItems) {
+    tPrice += item.price * item.quantity;
+    tPoint += item.point * item.quantity;
+  }
+  const [totalPrice, setTotalPrice] = useState(tPrice);
+  const [totalPoint, setTotalPoint] = useState(tPoint);
   const [isLoading, setLoading] = useState(false);
 
-  //msw Client-side request
-  useEffect(() => {
-    setLoading(true);
-    fetch("/cart")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setCartItems(data.cartItems);
-        setCartAfterItems(data.cartAfterItems);
-        setTotalPrice(data.totalPrice);
-        setTotalPoint(data.totalPoint);
-        setLoading(false);
-      });
-  }, []);
-
-  //function カート「あとで買う」
-  const handleCartItemBuyAfter = (cartId: number) => {
-    //加入あとで買う
-    const addAfterCartItems = cartItems.filter((item) => item.id == cartId);
-    const newCartAfterItems = cartAfterItems.concat(addAfterCartItems);
-    setCartAfterItems(newCartAfterItems);
-    //前端直接删除
-    const newCartItems = cartItems.filter((item) => item.id !== cartId);
-    setCartItems(newCartItems);
+  //reload
+  const router = useRouter();
+  const reload = () => {
+    router.reload();
   };
-
-  //function カート「削除」
-  const handleCartItemDelete = async (cartId: number) => {
-    //delete通信
-    const res = await deleteCartItem(cartId);
-    console.log(res, "handleCartItemDelete");
-    const newCartItems = res.data.cartItems;
-
-    setCartItems(newCartItems);
-  };
-  async function deleteCartItem(cartId: number) {
-    return axios.delete(`/cart/${cartId}`);
-  }
-
-  //function 　あとで買う「カートに戻す」
-  const handleCartAfterItemReturnToCart = (cartAfterId: number) => {
-    //加入カート
-    const addCartItems = cartAfterItems.filter(
-      (item) => item.id == cartAfterId
-    );
-    console.log(addCartItems);
-
-    const newCartItems = cartItems.concat(addCartItems);
-    setCartItems(newCartItems);
-    //前端直接删除
-    const newAfterCartItems = cartAfterItems.filter(
-      (item) => item.id !== cartAfterId
-    );
-    setCartAfterItems(newAfterCartItems);
-  };
-
-  //function あとで買う「削除」
-  const handleCartAfterItemDelete = (cartAfterId: number) => {
-    //delete通信
-    deleteCartAfterItem(cartAfterId);
-
-    //前端直接删除
-    const newCartAfterItems = cartAfterItems.filter(
-      (item) => item.id !== cartAfterId
-    );
-    setCartAfterItems(newCartAfterItems);
-  };
-  async function deleteCartAfterItem(cartAfterId: number) {
-    // await localhost.delete(`/cart/${cartAfterId}`);
-  }
 
   //msw Client-side request 例子
   // const [reviews, setReviews] = useState<Review[] | []>([]);
@@ -178,6 +135,95 @@ export default function Cart({ book, post }: Props) {
   //     .then((res) => res.json())
   //     .then(setReviews);
   // }, []);
+
+  //msw Client-side request
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch("/cart")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setData(data);
+  //       setCartItems(data.cartItems);
+  //       setCartAfterItems(data.cartAfterItems);
+  //       setTotalPrice(data.totalPrice);
+  //       setTotalPoint(data.totalPoint);
+  //       setLoading(false);
+  //     });
+  // }, []);
+
+  //get 请求
+  // async function getCartItems() {
+  //   setLoading(true);
+  //   const response = await localhost.get("/cart");
+
+  //   setData(response.data);
+  //   setCartItems(
+  //     response.data.filter((item: cartItemsObject) => item.isBuyAfter === false)
+  //   );
+  //   setCartAfterItems(
+  //     response.data.filter((item: cartItemsObject) => item.isBuyAfter === true)
+  //   );
+  //   setTotalPrice(
+  //     response.data
+  //       .filter((item: cartItemsObject) => item.isBuyAfter === false)
+  //       .map((item: cartItemsObject) => {
+  //         tPrice += item.price;
+  //         return tPrice;
+  //       })[0]
+  //   );
+  //   setTotalPoint(
+  //     response.data
+  //       .filter((item: cartItemsObject) => item.isBuyAfter === false)
+  //       .map((item: cartItemsObject) => {
+  //         tPoint += item.point;
+  //         return tPoint;
+  //       })[0]
+  //   );
+  //   setLoading(false);
+  // }
+
+  //あとで買う put请求
+  async function putBuyAfterOrReturnToCart(id: number, data: cartItemsObject) {
+    const response = await localhost.put(`/cart/${id}`, data);
+    reload();
+  }
+
+  //削除 delete请求
+  async function deleteCartItems(cartId: number) {
+    const response = await localhost.delete(`/cart/${cartId}`);
+    reload();
+  }
+
+  //JSON Server
+  // useEffect(() => {
+  //   getCartItems();
+  // }, []);
+
+  //function 「あとで買う」「カートに戻す」
+  const handleCartItemChange = (id: number, isBuyAfter: boolean) => {
+    const changeItem: cartItemsObject = cartItemsServerSideProps.filter(
+      (item) => item.id === id
+    )[0];
+    changeItem.isBuyAfter = !isBuyAfter;
+    putBuyAfterOrReturnToCart(id, changeItem);
+  };
+
+  //function 「削除」
+  const handleDelete = async (id: number) => {
+    deleteCartItems(id);
+  };
+
+  //function 更改数量
+  const handleUpdateQuality = (
+    id: number,
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const changeItem: cartItemsObject = cartItemsServerSideProps.filter(
+      (item) => item.id === id
+    )[0];
+    changeItem.quantity = Number(event.target.value);
+    putBuyAfterOrReturnToCart(id, changeItem);
+  };
 
   if (isLoading) return <p>Loading...</p>;
   if (!data) return <p>No profile data</p>;
@@ -196,13 +242,14 @@ export default function Cart({ book, post }: Props) {
       <main className={styles.main}>
         <CartItem
           cartItems={cartItems}
-          handleCartItemBuyAfter={handleCartItemBuyAfter}
-          handleCartItemDelete={handleCartItemDelete}
+          handleCartItemChange={handleCartItemChange}
+          handleDelete={handleDelete}
+          handleUpdateQuality={handleUpdateQuality}
         />
         <CartAfterItem
           cartAfterItems={cartAfterItems}
-          handleCartAfterItemReturnToCart={handleCartAfterItemReturnToCart}
-          handleCartAfterItemDelete={handleCartAfterItemDelete}
+          handleCartItemChange={handleCartItemChange}
+          handleDelete={handleDelete}
         />
         {/* <span>{book.title}</span> */}
       </main>
@@ -215,6 +262,15 @@ export default function Cart({ book, post }: Props) {
       </nav>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const { data: carts } = await localhost.get("/cart");
+  return {
+    props: {
+      cartItemsServerSideProps: carts,
+    },
+  };
 }
 
 // export async function getServerSideProps() {

@@ -4,14 +4,14 @@ import { cartItemsObject } from "../types/cart_type";
 
 type CartItemAfterType = {
   cartAfterItems: cartItemsObject[];
-  handleCartAfterItemReturnToCart: (cartAfterId: number) => void;
-  handleCartAfterItemDelete: (cartAfterId: number) => void;
+  handleCartItemChange: (id: number, isBuyAfter: boolean) => void;
+  handleDelete: (id: number) => void;
 };
 
 const CartAfterItem = ({
   cartAfterItems,
-  handleCartAfterItemReturnToCart,
-  handleCartAfterItemDelete,
+  handleCartItemChange,
+  handleDelete,
 }: CartItemAfterType) => {
   if (cartAfterItems.length < 1) {
     return <div></div>;
@@ -75,7 +75,10 @@ const CartAfterItem = ({
                         <button
                           className={styles.media_right_after_button}
                           onClick={() =>
-                            handleCartAfterItemReturnToCart(cartAfterItem.id)
+                            handleCartItemChange(
+                              cartAfterItem.id,
+                              cartAfterItem.isBuyAfter
+                            )
                           }
                         >
                           カートに戻す
@@ -87,9 +90,7 @@ const CartAfterItem = ({
                         </span>{" "}
                         <span
                           className={styles.media_right_delete_text}
-                          onClick={() =>
-                            handleCartAfterItemDelete(cartAfterItem.id)
-                          }
+                          onClick={() => handleDelete(cartAfterItem.id)}
                         >
                           <a className={styles.media_right_delete_text_a}>
                             削除

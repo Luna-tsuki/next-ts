@@ -1,5 +1,5 @@
 {
-  "cartItems": [
+  "cart": [
     {
       "id": 1,
       "images": "https://www.nitori-net.jp/ecstatic/image/product/8431007/843100701.jpg?imwidth=97&imdensity=1&ts=20200528175325664",
@@ -13,7 +13,8 @@
       "price": 200,
       "itemsPrice": 400,
       "deliveryPrice": 0,
-      "point": 15
+      "point": 15,
+      "isBuyAfter": false
     },
     {
       "id": 2,
@@ -24,14 +25,13 @@
       "size": "シングル",
       "deliveryTime": "2～6日で出荷",
       "storePickUp": false,
-      "quantity": 1,
+      "quantity": 2,
       "price": 7990,
       "itemsPrice": 7990,
       "deliveryPrice": 0,
-      "point": 72
-    }
-  ],
-  "cartAfterItems": [
+      "point": 72,
+      "isBuyAfter": false
+    },
     {
       "id": 3,
       "images": "https://www.nitori-net.jp/ecstatic/image/product/7760904/776090401.jpg?imwidth=97&imdensity=1&ts=20201116102157609",
@@ -45,7 +45,8 @@
       "price": 100,
       "itemsPrice": 300,
       "deliveryPrice": 0,
-      "point": 25
+      "point": 25,
+      "isBuyAfter": true
     },
     {
       "id": 4,
@@ -56,11 +57,12 @@
       "size": "シングル",
       "deliveryTime": "2～6日で出荷",
       "storePickUp": false,
-      "quantity": 1,
+      "quantity": 2,
       "price": 3990,
       "itemsPrice": 3990,
       "deliveryPrice": 0,
-      "point": 22
+      "point": 22,
+      "isBuyAfter": true
     }
   ]
 }
