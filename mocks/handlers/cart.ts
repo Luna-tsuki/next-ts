@@ -17,6 +17,7 @@ let cartItems = [
     itemsPrice: 400,
     deliveryPrice: 0,
     point: 15,
+    isBuyAfter: false,
   },
   {
     id: 2,
@@ -34,6 +35,7 @@ let cartItems = [
     itemsPrice: 7990,
     deliveryPrice: 0,
     point: 72,
+    isBuyAfter: false,
   },
 ];
 
@@ -53,6 +55,7 @@ const cartAfterItems = [
     itemsPrice: 300,
     deliveryPrice: 0,
     point: 25,
+    isBuyAfter: true,
   },
   {
     id: 4,
@@ -69,6 +72,7 @@ const cartAfterItems = [
     itemsPrice: 3990,
     deliveryPrice: 0,
     point: 22,
+    isBuyAfter: true,
   },
 ];
 

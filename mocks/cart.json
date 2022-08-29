@@ -30,7 +30,7 @@
       "itemsPrice": 7990,
       "deliveryPrice": 0,
       "point": 72,
-      "isBuyAfter": false
+      "isBuyAfter": true
     },
     {
       "id": 3,
@@ -46,7 +46,7 @@
       "itemsPrice": 300,
       "deliveryPrice": 0,
       "point": 25,
-      "isBuyAfter": true
+      "isBuyAfter": false
     },
     {
       "id": 4,

@@ -264,14 +264,37 @@ export default function Cart({
   );
 }
 
+//fetch getStaticProps SSG
+// export async function getStaticProps() {
+//   const res = await fetch("http://localhost:4000/cart");
+//   const carts = await res.json();
+//   return {
+//     props: {
+//       cartItemsServerSideProps: carts,
+//     },
+//   };
+// }
+
+//fetch getServerSideProps SSR
 export async function getServerSideProps() {
-  const { data: carts } = await localhost.get("/cart");
+  const res = await fetch("http://localhost:4000/cart");
+  const carts = await res.json();
   return {
     props: {
       cartItemsServerSideProps: carts,
     },
   };
 }
+
+// axios getServerSideProps SSR
+// export async function getServerSideProps() {
+//   const { data: carts } = await localhost.get("/cart");
+//   return {
+//     props: {
+//       cartItemsServerSideProps: carts,
+//     },
+//   };
+// }
 
 // export async function getServerSideProps() {
 //   // Server-side requests are mocked by `mocks/server.ts`.
