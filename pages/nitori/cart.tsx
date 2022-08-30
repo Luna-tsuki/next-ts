@@ -6,6 +6,7 @@ import axios from "axios";
 import CartItem from "../../component/cart_item";
 import CartAfterItem from "../../component/cart_after_item";
 import CartSidebar from "../../component/cart_sidebar";
+import VideoModule from "../../component/video";
 import { Book, Review, Post, cartItemsObject } from "../../types/cart_type";
 import { useRouter } from "next/router";
 
@@ -252,6 +253,7 @@ export default function Cart({
           handleDelete={handleDelete}
         />
         {/* <span>{book.title}</span> */}
+        <VideoModule />
       </main>
       <nav className={styles.sidebar}>
         <CartSidebar
